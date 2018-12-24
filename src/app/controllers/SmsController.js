@@ -213,8 +213,8 @@ export default {
         .skip(offset)
         .limit(limit)
         .exec()
-        .then(contact => res.status(200).json({
-          contact,
+        .then(contacts => res.status(200).json({
+          contacts,
           pageInfo: pagination(count, limit, offset)
         }));
     });
