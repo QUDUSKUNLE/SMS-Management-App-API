@@ -190,18 +190,18 @@ export default {
     if (req.query.contact) {
       let contact;
       try {
-        contact = await Contacts.findOne({ _id: req.query.contact.trim() });
+        contact = await Contacts.findOne({ phoneNumber: req.query.contact.trim() });
         return res.status(200).json({
           response: {
             _id: contact._id,
-            name: sender.name,
+            name: contact.name,
             success: true
           }
         });
       } catch (e) {
         return res.status(404).json({
           error: e,
-          message: 'Invalid message id',
+          message: 'Invalid message phoneNumber',
           success: false
         });
       }
@@ -221,7 +221,7 @@ export default {
   },
 
   /**
-   * Routes: DELETE: /api/v1/contact/:contactId
+   * Routes: DELETE: /api/v1/contacts/:phoneNumber
    * @description This deletes user`s account
    * @param {any} req user request object
    * @param {any} res server response
@@ -237,14 +237,18 @@ export default {
     }
     let contact;
     try {
-      contact = await Contacts.findById({ phoneNumber: req.params.phoneNumber.trim() });
-      if (contact) {
-        Contacts.remove({ _id: contact._id })
-          .then(() => res.status(202).send({
-            success: true,
-            message: 'Contact deleted successfully'
-          }));
+      contact = await Contacts.findOne({ phoneNumber: req.params.phoneNumber.trim() });
+      if (!contact) {
+        return res.status(404).json({
+          success: false,
+          message: 'Contact does not exist',
+        })
       }
+      Contacts.remove({ _id: contact._id })
+        .then(() => res.status(202).send({
+          success: true,
+          message: 'Contact deleted successfully'
+        }));
     } catch (e) { return res.status(500).json({ error: e }); }
   },
 
@@ -265,16 +269,22 @@ export default {
         error: 'User`s not authorized to perform this operation'
       });
     }
-    let message
+    let message;
     try {
       message = await Sms.find({}).where(
         { _id: req.params.messageId.trim(),
           'sender.id': req.params.contactId.trim() });
-      Sms.remove({ _id: req.params.messageId.trim() })
-        .then(() => res.status(202).send({
-          success: true,
-          message: 'Message deleted successfully'
-        }));
+        if (!message) {
+          return res.status(404).json({
+            message: 'Message does not exist',
+            success: false,
+          })
+        }
+        Sms.remove({ _id: req.params.messageId.trim() })
+          .then(() => res.status(202).send({
+            success: true,
+            message: 'Message deleted successfully'
+          }));
     } catch (e) { return res.status(500).json({ error: e }); }
   }
 };

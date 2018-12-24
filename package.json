@@ -18,8 +18,17 @@
     "author": "Qudus Yekeen",
     "license": "MIT",
     "devDependencies": {
+        "assert": "^1.4.1",
+        "cat": "^0.2.0",
+        "chai": "^4.2.0",
+        "chai-http": "^4.2.0",
+        "coveralls": "^3.0.2",
         "eslint-config-airbnb-base": "^13.1.0",
-        "eslint-plugin-import": "^2.14.0"
+        "eslint-plugin-import": "^2.14.0",
+        "istanbul": "^0.4.5",
+        "mocha": "^5.2.0",
+        "mocha-lcov-reporter": "^1.3.0",
+        "nyc": "^13.1.0"
     },
     "dependencies": {
         "babel-polyfill": "^6.26.0",
